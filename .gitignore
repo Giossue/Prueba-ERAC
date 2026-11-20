@@ -1,0 +1,7 @@
+/vendor/
+/node_modules/
+.env
+*.log
+
+# Índice local de skills generado por gentle-ai
+/.atl/
