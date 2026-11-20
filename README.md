@@ -26,7 +26,7 @@ descargar el código PHP ni las credenciales.
 
 ## Instalación (una sola vez)
 
-1. Crear el usuario y la base de datos:
+1. Crear el usuario y la base de datos: 
 
    ```bash
    sudo -iu postgres psql
