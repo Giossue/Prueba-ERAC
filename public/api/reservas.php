@@ -14,7 +14,9 @@ try {
     if ($metodo === 'GET') {
         $reporte = $_GET['reporte'] ?? 'general';
         if ($reporte === 'catalogos') {
-            responder_json($repositorio->catalogos());
+            $catalogos = $repositorio->catalogos();
+            $catalogos['fecha_actual'] = fecha_actual();
+            responder_json($catalogos);
         }
         if (!in_array($reporte, ['general', 'pendientes'], true)) {
             responder_error('Reporte no válido', 400);

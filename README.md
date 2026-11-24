@@ -12,6 +12,8 @@ psql -h localhost -U erac -d reservas_deportivas -v ON_ERROR_STOP=1 -f database/
 
 El archivo crea las tres tablas, la vista y datos de ejemplo para solicitantes y espacios. Si la base ya está preparada, no es necesario volver a cargarlo. Las cédulas se guardan como texto para conservar los ceros iniciales. La fecha de registro la asigna PostgreSQL automáticamente y el estado inicial es `Pendiente`.
 
+El formulario y el servidor validan los campos obligatorios. La fecha de uso debe ser hoy o posterior, tomando como referencia la zona horaria de Guayaquil; el servidor vuelve a comprobarla antes de guardar.
+
 La configuración predeterminada está en `config/config.php`; se puede adaptar mediante `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER` y `DB_PASS`.
 
 ```bash
@@ -22,8 +24,8 @@ Abrir <http://localhost:8000> para la gestión web o <http://localhost:8000/movi
 
 ## Reportes y API
 
-- El reporte general combina `reserva`, `solicitante` y `espacio_deportivo` mediante `JOIN`.
-- El reporte web de pendientes consulta `vw_reservas_pendientes` y la combina con solicitantes y espacios. Sus acciones solo permiten confirmar o rechazar reservas aún pendientes.
+- El reporte general combina `reserva`, `solicitante` y `espacio_deportivo` mediante `JOIN`. Desde él se pueden confirmar o rechazar las reservas pendientes.
+- El reporte web de pendientes consulta `vw_reservas_pendientes` y la combina con solicitantes y espacios. Al atender una reserva, ambos reportes se actualizan.
 
 | Método | Ruta | Uso |
 | --- | --- | --- |

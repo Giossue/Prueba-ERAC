@@ -9,29 +9,94 @@
 </head>
 <body>
     <header class="encabezado">
-        <div class="cabecera-interior"><div><p class="superior">ESPACIOS UNIVERSITARIOS</p><h1>Reservas deportivas</h1></div><a href="movil.html">Vista móvil →</a></div>
+        <div class="cabecera-interior">
+            <div>
+                <p class="superior">ESPACIOS UNIVERSITARIOS</p>
+                <h1>Reservas deportivas</h1>
+            </div>
+            <a href="movil.html">Vista móvil →</a>
+        </div>
     </header>
+
     <main class="contenedor">
-        <div class="introduccion"><p>Solicita un espacio y da seguimiento a las reservas.</p></div>
+        <nav class="pestanas" aria-label="Secciones de reservas">
+            <button type="button" class="activa" data-pantalla="solicitud" aria-pressed="true">Solicitud</button>
+            <button type="button" data-pantalla="general" aria-pressed="false">Reporte general</button>
+            <button type="button" data-pantalla="pendientes" aria-pressed="false">Pendientes</button>
+        </nav>
         <p id="mensaje" class="mensaje" role="status" hidden></p>
-        <section class="tarjeta">
-            <div class="seccion-titulo"><div><p class="superior acento">NUEVA SOLICITUD</p><h2>Registrar reserva</h2></div><span class="etiqueta">Estado inicial: Pendiente</span></div>
+
+        <section class="tarjeta" id="pantalla-solicitud">
+            <div class="seccion-titulo">
+                <h2>Registrar reserva</h2>
+            </div>
             <form id="formulario-reserva" novalidate>
                 <div class="campos">
-                    <div class="campo"><label for="id_solicitante">Solicitante</label><select id="id_solicitante" name="id_solicitante" required><option value="">Selecciona un solicitante</option></select><small data-error-para="id_solicitante"></small></div>
-                    <div class="campo"><label for="id_espacio">Espacio deportivo</label><select id="id_espacio" name="id_espacio" required><option value="">Selecciona un espacio</option></select><small data-error-para="id_espacio"></small></div>
-                    <div class="campo"><label for="fecha_uso">Fecha de uso</label><input id="fecha_uso" name="fecha_uso" type="date" required><small data-error-para="fecha_uso"></small></div>
+                    <div class="campo">
+                        <label for="id_solicitante">Solicitante</label>
+                        <select id="id_solicitante" name="id_solicitante" required>
+                            <option value="">Selecciona un solicitante</option>
+                        </select>
+                        <small data-error-para="id_solicitante"></small>
+                    </div>
+                    <div class="campo">
+                        <label for="id_espacio">Espacio deportivo</label>
+                        <select id="id_espacio" name="id_espacio" required>
+                            <option value="">Selecciona un espacio</option>
+                        </select>
+                        <small data-error-para="id_espacio"></small>
+                    </div>
+                    <div class="campo">
+                        <label for="fecha_uso">Fecha de uso</label>
+                        <input id="fecha_uso" name="fecha_uso" type="date" required>
+                        <small data-error-para="fecha_uso"></small>
+                    </div>
                 </div>
                 <button class="boton primario" type="submit">Enviar solicitud</button>
             </form>
         </section>
-        <section class="tarjeta">
-            <div class="seccion-titulo"><div><p class="superior acento">REPORTE</p><h2>Reservas pendientes</h2><p>Solicitudes pendientes de revisión.</p></div></div>
-            <div class="contenedor-tabla"><table><thead><tr><th>Solicitante</th><th>Espacio</th><th>Fecha de uso</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="lista-pendientes"><tr><td colspan="5">Cargando...</td></tr></tbody></table></div>
+
+        <section class="tarjeta" id="pantalla-general" hidden>
+            <div class="seccion-titulo">
+                <h2>Reporte general</h2>
+            </div>
+            <div class="contenedor-tabla">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Solicitante</th>
+                            <th>Espacio</th>
+                            <th>Fecha de uso</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-general">
+                        <tr><td colspan="5">Cargando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
-        <section class="tarjeta">
-            <div class="seccion-titulo"><div><p class="superior acento">HISTORIAL</p><h2>Reporte general</h2><p>Todas las solicitudes y su estado actual.</p></div></div>
-            <div class="contenedor-tabla"><table><thead><tr><th>Solicitante</th><th>Espacio</th><th>Fecha de uso</th><th>Estado</th></tr></thead><tbody id="lista-general"><tr><td colspan="4">Cargando...</td></tr></tbody></table></div>
+
+        <section class="tarjeta" id="pantalla-pendientes" hidden>
+            <div class="seccion-titulo">
+                <h2>Reservas pendientes</h2>
+            </div>
+            <div class="contenedor-tabla">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Solicitante</th>
+                            <th>Espacio</th>
+                            <th>Fecha de uso</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-pendientes">
+                        <tr><td colspan="4">Cargando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
     </main>
 </body>

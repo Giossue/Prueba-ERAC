@@ -68,22 +68,18 @@ h2 {
     font-weight: bold;
 }
 
-.acento {
-    color: #275d4d;
-}
-
 .seccion-titulo {
     margin-bottom: 1rem;
 }
 
-.etiqueta, .estado {
+.estado {
     display: inline-block;
     padding: 0.2rem 0.5rem;
     border-radius: 4px;
     font-size: 0.85rem;
 }
 
-.etiqueta, .estado-pendiente {
+.estado-pendiente {
     color: #755500;
     background: #fff1c2;
 }
@@ -208,6 +204,7 @@ th, td {
 
 .pestanas button {
     flex: 1;
+    min-width: 0;
 }
 
 .movil form {
