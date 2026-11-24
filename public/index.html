@@ -2,79 +2,37 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Productos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Reservas deportivas</title>
     <link rel="stylesheet" href="css/estilos.css">
+    <script src="js/app.js" defer></script>
 </head>
 <body>
     <header class="encabezado">
-        <h1>Productos</h1>
+        <div class="cabecera-interior"><div><p class="superior">ESPACIOS UNIVERSITARIOS</p><h1>Reservas deportivas</h1></div><a href="movil.html">Vista móvil →</a></div>
     </header>
-
     <main class="contenedor">
+        <div class="introduccion"><p>Solicita un espacio y da seguimiento a las reservas.</p></div>
+        <p id="mensaje" class="mensaje" role="status" hidden></p>
         <section class="tarjeta">
-            <h2 id="titulo-formulario">Nuevo producto</h2>
-
-            <form id="formulario-producto" novalidate>
-                <input type="hidden" id="producto-id">
-
-                <div class="campo">
-                    <label for="nombre">Nombre</label>
-                    <input type="text" id="nombre" name="nombre" maxlength="100" required>
-                    <small class="error" data-error-para="nombre"></small>
+            <div class="seccion-titulo"><div><p class="superior acento">NUEVA SOLICITUD</p><h2>Registrar reserva</h2></div><span class="etiqueta">Estado inicial: Pendiente</span></div>
+            <form id="formulario-reserva" novalidate>
+                <div class="campos">
+                    <div class="campo"><label for="id_solicitante">Solicitante</label><select id="id_solicitante" name="id_solicitante" required><option value="">Selecciona un solicitante</option></select><small data-error-para="id_solicitante"></small></div>
+                    <div class="campo"><label for="id_espacio">Espacio deportivo</label><select id="id_espacio" name="id_espacio" required><option value="">Selecciona un espacio</option></select><small data-error-para="id_espacio"></small></div>
+                    <div class="campo"><label for="fecha_uso">Fecha de uso</label><input id="fecha_uso" name="fecha_uso" type="date" required><small data-error-para="fecha_uso"></small></div>
                 </div>
-
-                <div class="campo">
-                    <label for="descripcion">Descripción</label>
-                    <textarea id="descripcion" name="descripcion" maxlength="500" rows="3"></textarea>
-                    <small class="error" data-error-para="descripcion"></small>
-                </div>
-
-                <div class="fila">
-                    <div class="campo">
-                        <label for="precio">Precio</label>
-                        <input type="number" id="precio" name="precio" min="0" step="0.01" required>
-                        <small class="error" data-error-para="precio"></small>
-                    </div>
-
-                    <div class="campo">
-                        <label for="stock">Stock</label>
-                        <input type="number" id="stock" name="stock" min="0" step="1" required>
-                        <small class="error" data-error-para="stock"></small>
-                    </div>
-                </div>
-
-                <div class="acciones">
-                    <button type="submit" class="boton boton-primario" id="boton-guardar">Guardar</button>
-                    <button type="button" class="boton" id="boton-cancelar" hidden>Cancelar</button>
-                </div>
+                <button class="boton primario" type="submit">Enviar solicitud</button>
             </form>
         </section>
-
         <section class="tarjeta">
-            <h2>Listado</h2>
-            <p id="mensaje" class="mensaje" role="status" hidden></p>
-
-            <div class="contenedor-tabla">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Descripción</th>
-                            <th class="numero">Precio</th>
-                            <th class="numero">Stock</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody id="lista-productos">
-                        <tr><td colspan="6" class="vacio">Cargando...</td></tr>
-                    </tbody>
-                </table>
-            </div>
+            <div class="seccion-titulo"><div><p class="superior acento">REPORTE</p><h2>Reservas pendientes</h2><p>Solicitudes pendientes de revisión.</p></div></div>
+            <div class="contenedor-tabla"><table><thead><tr><th>Solicitante</th><th>Espacio</th><th>Fecha de uso</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="lista-pendientes"><tr><td colspan="5">Cargando...</td></tr></tbody></table></div>
+        </section>
+        <section class="tarjeta">
+            <div class="seccion-titulo"><div><p class="superior acento">HISTORIAL</p><h2>Reporte general</h2><p>Todas las solicitudes y su estado actual.</p></div></div>
+            <div class="contenedor-tabla"><table><thead><tr><th>Solicitante</th><th>Espacio</th><th>Fecha de uso</th><th>Estado</th></tr></thead><tbody id="lista-general"><tr><td colspan="4">Cargando...</td></tr></tbody></table></div>
         </section>
     </main>
-
-    <script src="js/app.js"></script>
 </body>
 </html>

@@ -1,107 +1,50 @@
-# CRUD de productos — HTML, CSS, JS, PHP y PostgreSQL
+# Reservas de espacios deportivos
 
-Proyecto base: un CRUD de productos con un frontend en JavaScript puro (`fetch`)
-y una API REST en JSON hecha con PHP sin frameworks, usando PDO y sentencias
-preparadas.
+Aplicación de práctica con HTML, CSS, JavaScript, PHP y PostgreSQL, sin frameworks. Permite registrar solicitudes, consultar todas las reservas y confirmar o rechazar las pendientes. Incluye dos pantallas adaptadas a móvil que utilizan la misma API y los mismos datos.
 
-## Estructura
+## Preparación
 
-```
-config/config.php          Configuración de la base de datos (sobrescribible con variables de entorno)
-database/schema.sql        Definición de la tabla y datos de ejemplo
-public/                    Raíz web (la única carpeta que se sirve)
-  index.html               Interfaz: formulario + tabla
-  css/estilos.css          Estilos
-  js/app.js                Lógica del frontend (fetch API)
-  api/productos.php        Endpoint REST
-src/
-  BaseDatos.php            Conexión PDO compartida
-  ProductoRepositorio.php  Consultas SQL
-  http.php                 Funciones para responder JSON
-  validacion.php           Validación de datos de entrada
+Se necesita PHP con PDO PostgreSQL y una base de datos PostgreSQL **vacía de práctica**. Crear la base por el medio habitual y cargar el esquema una sola vez:
+
+```bash
+psql -h localhost -U erac -d reservas_deportivas -v ON_ERROR_STOP=1 -f database/reservasdeportivas.sql
 ```
 
-Al dejar `src/` y `config/` fuera de `public/`, el navegador nunca puede
-descargar el código PHP ni las credenciales.
+El archivo crea las tres tablas, la vista y datos de ejemplo para solicitantes y espacios. Si la base ya está preparada, no es necesario volver a cargarlo. Las cédulas se guardan como texto para conservar los ceros iniciales. La fecha de registro la asigna PostgreSQL automáticamente y el estado inicial es `Pendiente`.
 
-## Instalación (una sola vez)
-
-1. Crear el usuario y la base de datos: 
-
-   ```bash
-   sudo -iu postgres psql
-   ```
-
-   ```sql
-   CREATE ROLE erac WITH LOGIN PASSWORD 'erac123';
-   CREATE DATABASE "pruebaErac" OWNER erac ENCODING 'UTF8';
-   \q
-   ```
-
-   Las comillas dobles en `"pruebaErac"` conservan la mayúscula; sin ellas
-   PostgreSQL crearía `pruebaerac`.
-
-2. Cargar el esquema y los datos de ejemplo:
-
-   ```bash
-   psql -h localhost -U erac -d pruebaErac -f database/schema.sql
-   ```
-
-## Ejecución
+La configuración predeterminada está en `config/config.php`; se puede adaptar mediante `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER` y `DB_PASS`.
 
 ```bash
 php -S localhost:8000 -t public
 ```
 
-Abrir <http://localhost:8000>.
+Abrir <http://localhost:8000> para la gestión web o <http://localhost:8000/movil.html> para las pantallas móviles de solicitud y consulta.
 
-¿Otras credenciales? Se pueden cambiar sin tocar el código:
+## Reportes y API
 
-```bash
-DB_USER=otro DB_PASS=secreto DB_NAME=mibase php -S localhost:8000 -t public
-```
+- El reporte general combina `reserva`, `solicitante` y `espacio_deportivo` mediante `JOIN`.
+- El reporte web de pendientes consulta `vw_reservas_pendientes` y la combina con solicitantes y espacios. Sus acciones solo permiten confirmar o rechazar reservas aún pendientes.
 
-Variables disponibles: `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASS`.
+| Método | Ruta | Uso |
+| --- | --- | --- |
+| GET | `/api/reservas.php?reporte=catalogos` | Solicitantes y espacios disponibles |
+| GET | `/api/reservas.php?reporte=general` | Reporte de todas las reservas |
+| GET | `/api/reservas.php?reporte=pendientes` | Reporte basado en la vista |
+| POST | `/api/reservas.php` | Crear una solicitud |
+| PATCH | `/api/reservas.php?id=1` | Cambiar el estado de una reserva pendiente |
 
-## API
-
-| Método | URL                        | Cuerpo | Respuesta correcta    |
-|--------|----------------------------|--------|-----------------------|
-| GET    | `/api/productos.php`        | —      | 200, lista            |
-| GET    | `/api/productos.php?id=1`   | —      | 200, producto         |
-| POST   | `/api/productos.php`        | JSON   | 201, producto creado  |
-| PUT    | `/api/productos.php?id=1`   | JSON   | 200, producto editado |
-| DELETE | `/api/productos.php?id=1`   | —      | 204, sin cuerpo       |
-
-Cuerpo JSON:
+Ejemplo de solicitud:
 
 ```json
-{ "nombre": "Teclado", "descripcion": "Mecánico", "precio": 49.9, "stock": 12 }
+{ "id_solicitante": "1234567890", "id_espacio": 1, "fecha_uso": "2027-05-15" }
 ```
 
-Los errores devuelven `{ "error": "..." }`. Si falla la validación, además
-incluyen `detalles` con un mensaje por cada campo:
+Para cambiar el estado, enviar `{"estado":"Confirmada"}` o `{"estado":"Rechazada"}`. La API valida los campos y responde con JSON; devuelve 409 si la reserva no existe o ya no está pendiente. La base comprueba las claves foráneas y los estados permitidos.
 
-| Código | Significado                                   |
-|--------|-----------------------------------------------|
-| 400    | JSON inválido o `id` inválido                 |
-| 404    | Producto no encontrado                        |
-| 405    | Método no permitido                           |
-| 422    | Validación fallida (ver `detalles`)            |
-| 500    | Error de base de datos (se registra, no se muestra) |
+## Archivos principales
 
-Prueba rápida desde la terminal:
-
-```bash
-curl -s localhost:8000/api/productos.php
-curl -s -X POST localhost:8000/api/productos.php \
-     -H 'Content-Type: application/json' \
-     -d '{"nombre":"Webcam","precio":35,"stock":4}'
-```
-
-## Buenas prácticas de seguridad aplicadas
-
-- Sentencias preparadas en todas las consultas (evita la inyección SQL).
-- Los datos se muestran en JS con `textContent` (evita XSS).
-- Validación en el servidor; los atributos HTML del formulario son solo una ayuda.
-- Los errores de base de datos se registran en el log y nunca se muestran al cliente.
+- `database/reservasdeportivas.sql`: modelo, vista y datos iniciales.
+- `public/index.html` y `public/movil.html`: interfaces web y móvil.
+- `public/js/app.js` y `public/css/estilos.css`: lógica y estilos compartidos.
+- `public/api/reservas.php`: API JSON.
+- `src/ReservaRepositorio.php`: consultas a PostgreSQL.

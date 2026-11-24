@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Reservas deportivas · Móvil</title>
+    <link rel="stylesheet" href="css/estilos.css">
+    <script src="js/app.js" defer></script>
+</head>
+<body class="movil">
+    <header class="encabezado"><div class="cabecera-interior"><div><p class="superior">ESPACIOS UNIVERSITARIOS</p><h1>Mis reservas</h1></div><a href="index.html">Vista web</a></div></header>
+    <main class="contenedor">
+        <nav class="pestanas" aria-label="Pantallas móviles"><button type="button" class="activa" data-pantalla="solicitud" aria-pressed="true">Solicitar</button><button type="button" data-pantalla="consulta" aria-pressed="false">Consultar reservas</button></nav>
+        <p id="mensaje" class="mensaje" role="status" hidden></p>
+        <section class="tarjeta" id="pantalla-solicitud">
+            <p class="superior acento">NUEVA SOLICITUD</p><h2>Reserva un espacio</h2><p>Elige dónde y cuándo quieres jugar.</p>
+            <form id="formulario-reserva" novalidate>
+                <div class="campo"><label for="id_solicitante">Solicitante</label><select id="id_solicitante" name="id_solicitante" required><option value="">Selecciona un solicitante</option></select><small data-error-para="id_solicitante"></small></div>
+                <div class="campo"><label for="id_espacio">Espacio deportivo</label><select id="id_espacio" name="id_espacio" required><option value="">Selecciona un espacio</option></select><small data-error-para="id_espacio"></small></div>
+                <div class="campo"><label for="fecha_uso">Fecha de uso</label><input id="fecha_uso" name="fecha_uso" type="date" required><small data-error-para="fecha_uso"></small></div>
+                <button class="boton primario ancho" type="submit">Enviar solicitud</button>
+            </form>
+        </section>
+        <section class="tarjeta" id="pantalla-consulta" hidden>
+            <p class="superior acento">CONSULTA</p><h2>Reservas registradas</h2><p>Consulta el estado de las solicitudes.</p>
+            <div id="lista-movil"><p>Cargando...</p></div>
+        </section>
+    </main>
+</body>
+</html>
