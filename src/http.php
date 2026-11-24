@@ -6,17 +6,16 @@ declare(strict_types=1);
  * Funciones auxiliares para APIs JSON.
  */
 
+// Envía los datos como JSON y termina la petición con el código HTTP indicado.
 function responder_json(mixed $datos, int $estado = 200): never
 {
     http_response_code($estado);
-    // Una respuesta 204 No Content no debe llevar cuerpo.
-    if ($estado !== 204) {
-        header('Content-Type: application/json; charset=utf-8');
-        echo json_encode($datos, JSON_UNESCAPED_UNICODE);
-    }
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($datos, JSON_UNESCAPED_UNICODE);
     exit;
 }
 
+// Construye una respuesta de error; puede incluir mensajes para campos concretos.
 function responder_error(string $mensaje, int $estado, array $detalles = []): never
 {
     $cuerpo = ['error' => $mensaje];
@@ -26,6 +25,7 @@ function responder_error(string $mensaje, int $estado, array $detalles = []): ne
     responder_json($cuerpo, $estado);
 }
 
+// Lee el JSON que envía el navegador y lo convierte en un arreglo de PHP.
 /** @return array<string, mixed> */
 function leer_cuerpo_json(): array
 {

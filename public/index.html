@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Reservas deportivas</title>
+    <!-- CSS define la apariencia y JavaScript controla las acciones de la página. -->
     <link rel="stylesheet" href="css/estilos.css">
     <script src="js/app.js" defer></script>
 </head>
@@ -11,7 +12,6 @@
     <header class="encabezado">
         <div class="cabecera-interior">
             <div>
-                <p class="superior">ESPACIOS UNIVERSITARIOS</p>
                 <h1>Reservas deportivas</h1>
             </div>
             <a href="movil.html">Vista móvil →</a>
@@ -19,18 +19,21 @@
     </header>
 
     <main class="contenedor">
+        <!-- Cada botón muestra la sección indicada por data-pantalla. -->
         <nav class="pestanas" aria-label="Secciones de reservas">
             <button type="button" class="activa" data-pantalla="solicitud" aria-pressed="true">Solicitud</button>
             <button type="button" data-pantalla="general" aria-pressed="false">Reporte general</button>
             <button type="button" data-pantalla="pendientes" aria-pressed="false">Pendientes</button>
         </nav>
+        <!-- JavaScript usa este espacio para mensajes de éxito o error. -->
         <p id="mensaje" class="mensaje" role="status" hidden></p>
 
+        <!-- Formulario: JavaScript llena los selectores y muestra los errores en los elementos small. -->
         <section class="tarjeta" id="pantalla-solicitud">
             <div class="seccion-titulo">
                 <h2>Registrar reserva</h2>
             </div>
-            <form id="formulario-reserva" novalidate>
+            <form id="formulario-reserva">
                 <div class="campos">
                     <div class="campo">
                         <label for="id_solicitante">Solicitante</label>
@@ -56,6 +59,7 @@
             </form>
         </section>
 
+        <!-- Reporte general: JavaScript agrega las filas y las acciones para reservas pendientes. -->
         <section class="tarjeta" id="pantalla-general" hidden>
             <div class="seccion-titulo">
                 <h2>Reporte general</h2>
@@ -78,6 +82,7 @@
             </div>
         </section>
 
+        <!-- Segundo reporte: sus datos vienen de la vista de reservas pendientes. -->
         <section class="tarjeta" id="pantalla-pendientes" hidden>
             <div class="seccion-titulo">
                 <h2>Reservas pendientes</h2>

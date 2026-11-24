@@ -1,3 +1,4 @@
+/* Estilos generales de la página y cálculo de tamaños. */
 * {
     box-sizing: border-box;
 }
@@ -10,10 +11,12 @@ body {
     line-height: 1.5;
 }
 
+/* Las secciones ocultas de las pestañas no ocupan espacio. */
 [hidden] {
     display: none !important;
 }
 
+/* Cabecera y enlace entre las vistas web y móvil. */
 .encabezado {
     padding: 1rem;
     color: white;
@@ -41,6 +44,7 @@ body {
     color: white;
 }
 
+/* Contenedor central y tarjetas de contenido. */
 .contenedor {
     max-width: 1000px;
     margin: auto;
@@ -63,15 +67,11 @@ h2 {
     font-size: 1.2rem;
 }
 
-.superior {
-    font-size: 0.8rem;
-    font-weight: bold;
-}
-
 .seccion-titulo {
     margin-bottom: 1rem;
 }
 
+/* Colores para diferenciar los estados de las reservas. */
 .estado {
     display: inline-block;
     padding: 0.2rem 0.5rem;
@@ -94,6 +94,7 @@ h2 {
     background: #fbe2df;
 }
 
+/* Distribución y presentación de los campos del formulario. */
 .campos {
     display: flex;
     gap: 1rem;
@@ -128,6 +129,7 @@ small {
     color: #a22;
 }
 
+/* Botones, pestaña activa y estado deshabilitado. */
 .boton, .pestanas button {
     padding: 0.6rem 1rem;
     border: 1px solid #aaa;
@@ -163,6 +165,7 @@ small {
     gap: 0.5rem;
 }
 
+/* Las tablas pueden desplazarse horizontalmente en pantallas pequeñas. */
 .contenedor-tabla {
     overflow-x: auto;
 }
@@ -183,6 +186,7 @@ th, td {
     text-align: center;
 }
 
+/* Mensajes de éxito y error. */
 .mensaje {
     padding: 0.75rem;
     border-radius: 4px;
@@ -198,6 +202,7 @@ th, td {
     background: #fbe2df;
 }
 
+/* Ajustes de ancho y presentación de la vista móvil. */
 .movil .contenedor {
     max-width: 500px;
 }
@@ -220,6 +225,7 @@ th, td {
     border-top: 1px solid #ddd;
 }
 
+/* En pantallas pequeñas, los campos se muestran uno debajo del otro. */
 @media (max-width: 700px) {
     .campos {
         display: block;

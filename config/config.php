@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-/**
- * Configuración de la aplicación
- */
+// Datos de conexión para la BD
 return [
     'bd' => [
         'host' => getenv('DB_HOST') ?: 'localhost',

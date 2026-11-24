@@ -11,7 +11,6 @@
     <header class="encabezado">
         <div class="cabecera-interior">
             <div>
-                <p class="superior">ESPACIOS UNIVERSITARIOS</p>
                 <h1>Mis reservas</h1>
             </div>
             <a href="index.html">Vista web</a>
@@ -19,16 +18,18 @@
     </header>
 
     <main class="contenedor">
+        <!-- Botones para cambiar entre las dos pantallas móviles. -->
         <nav class="pestanas" aria-label="Pantallas móviles">
             <button type="button" class="activa" data-pantalla="solicitud" aria-pressed="true">Solicitar</button>
             <button type="button" data-pantalla="consulta" aria-pressed="false">Consultar reservas</button>
         </nav>
         <p id="mensaje" class="mensaje" role="status" hidden></p>
 
+        <!-- Formulario conectado a la misma API que la página web. -->
         <section class="tarjeta" id="pantalla-solicitud">
             <h2>Reserva un espacio</h2>
             <p>Elige dónde y cuándo quieres jugar.</p>
-            <form id="formulario-reserva" novalidate>
+            <form id="formulario-reserva">
                 <div class="campo">
                     <label for="id_solicitante">Solicitante</label>
                     <select id="id_solicitante" name="id_solicitante" required>
@@ -52,6 +53,7 @@
             </form>
         </section>
 
+        <!-- JavaScript llena esta sección con espacio, fecha y estado. -->
         <section class="tarjeta" id="pantalla-consulta" hidden>
             <h2>Reservas registradas</h2>
             <p>Consulta el estado de las solicitudes.</p>

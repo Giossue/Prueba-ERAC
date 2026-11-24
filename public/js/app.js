@@ -4,14 +4,13 @@ const api = 'api/reservas.php';
 const formulario = document.getElementById('formulario-reserva');
 const mensaje = document.getElementById('mensaje');
 
-// Todas las peticiones usan JSON y muestran los errores enviados por PHP.
+// Envía una petición a PHP y devuelve su respuesta JSON.
 async function llamarApi(url, opciones = {}) {
     const respuesta = await fetch(url, {
         headers: { 'Content-Type': 'application/json' },
         ...opciones,
     });
     const datos = await respuesta.json().catch(() => null);
-
     if (!respuesta.ok) {
         const error = new Error(datos?.error || 'Error al consultar el servidor');
         error.detalles = datos?.detalles || {};
@@ -20,6 +19,7 @@ async function llamarApi(url, opciones = {}) {
     return datos;
 }
 
+// Muestra un mensaje general y los posibles errores de cada campo.
 function mostrarMensaje(texto, esError = false) {
     mensaje.textContent = texto;
     mensaje.className = esError ? 'mensaje error' : 'mensaje exito';
@@ -27,129 +27,111 @@ function mostrarMensaje(texto, esError = false) {
 }
 
 function mostrarErrores(errores = {}) {
-    const mensajes = formulario.querySelectorAll('[data-error-para]');
-    for (const elemento of mensajes) {
+    for (const elemento of formulario.querySelectorAll('[data-error-para]')) {
         const nombre = elemento.dataset.errorPara;
-        const error = errores[nombre] || '';
-        elemento.textContent = error;
-        formulario.elements[nombre].setAttribute('aria-invalid', error ? 'true' : 'false');
+        elemento.textContent = errores[nombre] || '';
+        formulario.elements[nombre].setAttribute('aria-invalid', errores[nombre] ? 'true' : 'false');
     }
 }
 
+// Llena los selectores y establece la fecha mínima que envía el servidor.
 async function cargarCatalogos() {
     const datos = await llamarApi(`${api}?reporte=catalogos`);
     formulario.elements.fecha_uso.min = datos.fecha_actual;
-
-    for (const solicitante of datos.solicitantes) {
-        const texto = `${solicitante.nombre} · ${solicitante.cedula_solicitante}`;
-        formulario.elements.id_solicitante.add(new Option(texto, solicitante.cedula_solicitante));
+    for (const persona of datos.solicitantes) {
+        const nombre = `${persona.nombre} · ${persona.cedula_solicitante}`;
+        formulario.elements.id_solicitante.add(new Option(nombre, persona.cedula_solicitante));
     }
     for (const espacio of datos.espacios) {
         formulario.elements.id_espacio.add(new Option(espacio.nombre, espacio.id_espacio));
     }
 }
 
-// Se usa textContent para mostrar los datos como texto.
-function crearCelda(texto) {
-    const celda = document.createElement('td');
-    celda.textContent = texto;
-    return celda;
+// Crea elementos con texto seguro para las tablas y la lista móvil.
+function crearElemento(tipo, texto = '', clase = '') {
+    const elemento = document.createElement(tipo);
+    elemento.textContent = texto;
+    if (clase) elemento.className = clase;
+    return elemento;
 }
 
-function crearEstado(texto) {
-    const estado = document.createElement('span');
-    estado.className = `estado estado-${texto.toLowerCase()}`;
-    estado.textContent = texto;
-    return estado;
+function crearEstado(estado) {
+    return crearElemento('span', estado, `estado estado-${estado.toLowerCase()}`);
 }
 
-function crearBoton(texto, id, estado) {
-    const boton = document.createElement('button');
-    boton.type = 'button';
-    boton.className = 'boton pequeno';
-    boton.textContent = texto;
-    boton.addEventListener('click', () => cambiarEstado(id, estado, boton));
-    return boton;
+// Solo las reservas pendientes tienen botones para cambiar de estado.
+function crearAcciones(reserva) {
+    const acciones = crearElemento('div', '', 'acciones');
+    for (const [texto, estado] of [['Confirmar', 'Confirmada'], ['Rechazar', 'Rechazada']]) {
+        const boton = crearElemento('button', texto, 'boton pequeno');
+        boton.type = 'button';
+        boton.addEventListener('click', () => cambiarEstado(reserva.id_reserva, estado, boton));
+        acciones.append(boton);
+    }
+    return acciones;
 }
 
-function mostrarTabla(id, reservas, mostrarAcciones = false) {
+// Muestra uno de los reportes; el general incluye una columna de acciones.
+function mostrarTabla(id, reservas, conAcciones = false) {
     const lista = document.getElementById(id);
     if (!lista) return;
     lista.replaceChildren();
-
     if (reservas.length === 0) {
-        const fila = document.createElement('tr');
-        const celda = crearCelda('No hay reservas para mostrar.');
-        celda.colSpan = mostrarAcciones ? 5 : 4;
-        celda.className = 'vacio';
+        const fila = crearElemento('tr');
+        const celda = crearElemento('td', 'No hay reservas para mostrar.', 'vacio');
+        celda.colSpan = conAcciones ? 5 : 4;
         fila.append(celda);
         lista.append(fila);
         return;
     }
-
     for (const reserva of reservas) {
-        const fila = document.createElement('tr');
-        const celdaEstado = document.createElement('td');
-        celdaEstado.append(crearEstado(reserva.estado));
-        fila.append(
-            crearCelda(reserva.solicitante),
-            crearCelda(reserva.espacio),
-            crearCelda(reserva.fecha_uso),
-            celdaEstado,
-        );
-
-        if (mostrarAcciones) {
-            const celdaAcciones = document.createElement('td');
+        const fila = crearElemento('tr');
+        const estado = crearElemento('td');
+        estado.append(crearEstado(reserva.estado));
+        fila.append(crearElemento('td', reserva.solicitante), crearElemento('td', reserva.espacio),
+            crearElemento('td', reserva.fecha_uso), estado);
+        if (conAcciones) {
+            const celda = crearElemento('td');
             if (reserva.estado === 'Pendiente') {
-                const acciones = document.createElement('div');
-                acciones.className = 'acciones';
-                acciones.append(
-                    crearBoton('Confirmar', reserva.id_reserva, 'Confirmada'),
-                    crearBoton('Rechazar', reserva.id_reserva, 'Rechazada'),
-                );
-                celdaAcciones.append(acciones);
+                celda.append(crearAcciones(reserva));
             } else {
-                celdaAcciones.textContent = '—';
+                celda.textContent = '—';
             }
-            fila.append(celdaAcciones);
+            fila.append(celda);
         }
         lista.append(fila);
     }
 }
 
+// La consulta móvil muestra espacio, fecha y estado de cada reserva.
 function mostrarMovil(reservas) {
     const lista = document.getElementById('lista-movil');
     if (!lista) return;
     lista.replaceChildren();
-
     if (reservas.length === 0) {
         lista.textContent = 'No hay reservas para mostrar.';
         return;
     }
-
     for (const reserva of reservas) {
-        const tarjeta = document.createElement('article');
-        const nombre = document.createElement('h3');
-        const fecha = document.createElement('p');
-        tarjeta.className = 'reserva-movil';
-        nombre.textContent = reserva.espacio;
-        fecha.textContent = `Fecha de uso: ${reserva.fecha_uso}`;
-        tarjeta.append(nombre, fecha, crearEstado(reserva.estado));
+        const tarjeta = crearElemento('article', '', 'reserva-movil');
+        tarjeta.append(crearElemento('h3', reserva.espacio),
+            crearElemento('p', `Fecha de uso: ${reserva.fecha_uso}`), crearEstado(reserva.estado));
         lista.append(tarjeta);
     }
 }
 
+// Carga ambos reportes; en móvil solo se necesita el general.
 async function cargarReportes() {
-    const general = await llamarApi(`${api}?reporte=general`);
-    mostrarTabla('lista-general', general, true);
-    mostrarMovil(general);
-
+    const reservas = await llamarApi(`${api}?reporte=general`);
+    mostrarTabla('lista-general', reservas, true);
+    mostrarMovil(reservas);
     if (document.getElementById('lista-pendientes')) {
         const pendientes = await llamarApi(`${api}?reporte=pendientes`);
         mostrarTabla('lista-pendientes', pendientes);
     }
 }
 
+// Si falla la recarga, avisa que el cambio ya se guardó.
 async function actualizarReportes() {
     try {
         await cargarReportes();
@@ -158,12 +140,12 @@ async function actualizarReportes() {
     }
 }
 
+// Envía el nuevo estado y recarga los reportes.
 async function cambiarEstado(id, estado, boton) {
     boton.disabled = true;
     try {
         await llamarApi(`${api}?id=${encodeURIComponent(id)}`, {
-            method: 'PATCH',
-            body: JSON.stringify({ estado }),
+            method: 'PATCH', body: JSON.stringify({ estado }),
         });
         mostrarMensaje(`Reserva ${estado.toLowerCase()}.`);
         await actualizarReportes();
@@ -175,6 +157,7 @@ async function cambiarEstado(id, estado, boton) {
     }
 }
 
+// El navegador comprueba los campos obligatorios y la fecha mínima; PHP los valida otra vez.
 formulario.addEventListener('submit', async (evento) => {
     evento.preventDefault();
     mostrarErrores();
@@ -184,26 +167,11 @@ formulario.addEventListener('submit', async (evento) => {
         id_espacio: formulario.elements.id_espacio.value,
         fecha_uso: formulario.elements.fecha_uso.value,
     };
-
-    const errores = {};
-    if (!datos.id_solicitante) errores.id_solicitante = 'Selecciona un solicitante';
-    if (!datos.id_espacio) errores.id_espacio = 'Selecciona un espacio';
-    if (!datos.fecha_uso) {
-        errores.fecha_uso = 'Selecciona una fecha de uso';
-    } else if (formulario.elements.fecha_uso.min && datos.fecha_uso < formulario.elements.fecha_uso.min) {
-        errores.fecha_uso = 'La fecha de uso no puede ser anterior a hoy';
-    }
-    if (Object.keys(errores).length > 0) {
-        mostrarErrores(errores);
-        mostrarMensaje('Revisa los campos del formulario.', true);
-        return;
-    }
-
     boton.disabled = true;
     try {
         await llamarApi(api, { method: 'POST', body: JSON.stringify(datos) });
         formulario.reset();
-        mostrarMensaje('Solicitud registrada con estado Pendiente.');
+        mostrarMensaje('Solicitud registrada');
         await actualizarReportes();
     } catch (error) {
         mostrarErrores(error.detalles);
@@ -213,7 +181,7 @@ formulario.addEventListener('submit', async (evento) => {
     }
 });
 
-// Cambia la sección visible al pulsar una pestaña.
+// Muestra la sección elegida y oculta las demás.
 for (const boton of document.querySelectorAll('[data-pantalla]')) {
     boton.addEventListener('click', () => {
         for (const opcion of document.querySelectorAll('[data-pantalla]')) {
@@ -225,6 +193,7 @@ for (const boton of document.querySelectorAll('[data-pantalla]')) {
     });
 }
 
+// Al abrir la página se cargan los selectores y los reportes.
 async function iniciar() {
     try {
         await cargarCatalogos();
